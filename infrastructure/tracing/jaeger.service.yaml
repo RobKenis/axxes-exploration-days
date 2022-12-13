@@ -10,7 +10,10 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 16686
+      name: http
     - protocol: UDP
       port: 14268
+      name: thrift
     - protocol: UDP
       port: 14250
+      name: proto
