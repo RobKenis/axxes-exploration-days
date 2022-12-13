@@ -63,6 +63,8 @@ jobs:
       - name: Test with Maven
         working-directory: ./test-result-visualizer
         run: mvn clean verify --batch-mode
+        env:
+          DISABLE_THE_SVG_TEST: true
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
