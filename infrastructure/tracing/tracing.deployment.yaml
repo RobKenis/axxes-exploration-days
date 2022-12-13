@@ -40,3 +40,11 @@ spec:
           ports:
             - containerPort: 13133
             - containerPort: 4317
+          volumeMounts:
+            - mountPath: /etc/otel-collector-config.yaml
+              subPath: otel-collector-config.yaml
+              name: ze-config
+      volumes:
+        - name: ze-config
+          configMap:
+            name: otel-collector-config
