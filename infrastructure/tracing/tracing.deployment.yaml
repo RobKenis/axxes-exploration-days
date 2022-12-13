@@ -43,8 +43,8 @@ spec:
           volumeMounts:
             - mountPath: /etc/otel-collector-config.yaml
               subPath: otel-collector-config.yaml
-              name: ze-config
+              name: otel-collector-config-volume
       volumes:
-        - name: ze-config
+        - name: otel-collector-config-volume
           configMap:
             name: otel-collector-config

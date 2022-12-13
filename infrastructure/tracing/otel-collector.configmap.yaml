@@ -5,11 +5,11 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: otel-collector:4317
+            endpoint: otel-collector.tracing.svc.cluster.local:4317
 
     exporters:
       jaeger:
-        endpoint: jaeger-all-in-one:14250
+        endpoint: jaeger.tracing.svc.cluster.local:14250
         tls:
           insecure: true
 
