@@ -15,14 +15,14 @@ jobs:
       - name: Test with Maven
         working-directory: ./atriac-test-results
         run: mvn clean verify --batch-mode
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          version: 'latest'
-          java-version: '11'
-          components: 'native-image'
+      #      - uses: graalvm/setup-graalvm@v1
+      #        with:
+      #          version: 'latest'
+      #          java-version: '11'
+      #          components: 'native-image'
       - name: Build with Maven
         working-directory: ./atriac-test-results
-        run: mvn --batch-mode --update-snapshots package -DskipTests -Pnative
+        run: mvn --batch-mode --update-snapshots package -DskipTests
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -46,7 +46,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          file: ./atriac-test-results/Dockerfile
+          file: ./atriac-test-results/src/main/docker/Dockerfile.jvm
           context: ./atriac-test-results/
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -65,14 +65,14 @@ jobs:
         run: mvn clean verify --batch-mode
         env:
           DISABLE_THE_SVG_TEST: true
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          version: 'latest'
-          java-version: '11'
-          components: 'native-image'
+      #      - uses: graalvm/setup-graalvm@v1
+      #        with:
+      #          version: 'latest'
+      #          java-version: '11'
+      #          components: 'native-image'
       - name: Build with Maven
         working-directory: ./test-result-visualizer
-        run: mvn --batch-mode --update-snapshots package -DskipTests -Pnative
+        run: mvn --batch-mode --update-snapshots package -DskipTests
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -96,7 +96,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          file: ./test-result-visualizer/Dockerfile
+          file: ./test-result-visualizer/src/main/docker/Dockerfile.jvm
           context: ./test-result-visualizer/
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
