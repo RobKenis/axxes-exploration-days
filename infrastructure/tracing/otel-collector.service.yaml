@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  namespace: tracing
+spec:
+  selector:
+    app.kubernetes.io/name: jaeger-tracing
+  ports:
+    - protocol: TCP
+      port: 13133
+      name: health
+    - protocol: UDP
+      port: 4317
+      name: grpc

@@ -14,10 +14,42 @@ jobs:
           distribution: 'adopt'
       - name: Test with Maven
         working-directory: ./atriac-test-results
-        run: mvn clean verify
+        run: mvn clean verify --batch-mode
+      #      - uses: graalvm/setup-graalvm@v1
+      #        with:
+      #          version: 'latest'
+      #          java-version: '11'
+      #          components: 'native-image'
       - name: Build with Maven
         working-directory: ./atriac-test-results
         run: mvn --batch-mode --update-snapshots package -DskipTests
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to GitHub Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4.1.1
+        with:
+          images: ghcr.io/robkenis/axxes-exploration-days/atriac-test-results
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - name: Build Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: ./atriac-test-results/src/main/docker/Dockerfile.jvm
+          context: ./atriac-test-results/
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   test-result-visualizer:
     runs-on: ubuntu-latest
@@ -30,7 +62,41 @@ jobs:
           distribution: 'adopt'
       - name: Test with Maven
         working-directory: ./test-result-visualizer
-        run: mvn clean verify
+        run: mvn clean verify --batch-mode
+        env:
+          DISABLE_THE_SVG_TEST: true
+      #      - uses: graalvm/setup-graalvm@v1
+      #        with:
+      #          version: 'latest'
+      #          java-version: '11'
+      #          components: 'native-image'
       - name: Build with Maven
         working-directory: ./test-result-visualizer
         run: mvn --batch-mode --update-snapshots package -DskipTests
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to GitHub Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4.1.1
+        with:
+          images: ghcr.io/robkenis/axxes-exploration-days/test-result-visualizer
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+      - name: Build Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: ./test-result-visualizer/src/main/docker/Dockerfile.jvm
+          context: ./test-result-visualizer/
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
