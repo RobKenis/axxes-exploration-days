@@ -8,7 +8,10 @@ import javax.enterprise.context.ApplicationScoped
 class CSSCalculator(val eventPublisher: EventPublisher) {
     @ConsumeEvent(TestResultReceivedEvent.address)
     fun consume (message : Message<TestResultReceivedEvent>) {
+        val athleteName = message.body().name
         val athleteTimings = message.body().testResult.timings
-        SwimSpeed(athleteTimings.getFull400m(), athleteTimings.getFull200m())
+        val athleteSwimSpeed = SwimSpeed(athleteTimings.getFull400m(), athleteTimings.getFull200m())
+
+        eventPublisher.publish(SwimSpeedComputedEvent(athleteName, athleteSwimSpeed))
     }
 }

@@ -28,7 +28,7 @@ class StubTestResultListener(private val eventBus: EventBus) : TestResultListene
                 )
         )
 
-        val event = TestResultBatchReceivedEvent("testBatch",testResults)
+        val event = TestResultBatchReceivedEvent("testBatch", testResults)
         eventBus.publish(event.address(), event.payload())
         return event
     }
