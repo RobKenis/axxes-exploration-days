@@ -1,6 +1,7 @@
 package com.axxes
 
 
+import com.axxes.Timings
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.Duration
