@@ -11,6 +11,6 @@ class TestResultBatchSplitter(val eventPublisher: EventPublisher) {
     fun consume(message: Message<TestResultBatchReceivedEvent>) {
         message.body().testResults.parallelStream()
                 .map { result: TestResult -> TestResultReceivedEvent(message.body().name, result) }
-                .forEach(eventPublisher::publish)
+                .forEach (eventPublisher::publish)
     }
 }
