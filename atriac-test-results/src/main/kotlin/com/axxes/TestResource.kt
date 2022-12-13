@@ -12,7 +12,7 @@ class TestResource(val testResultListener: TestResultListener) {
     @Produces(MediaType.TEXT_PLAIN)
     fun test(): String {
         testResultListener.resultsUploaded()
-        return "hello"
+        return "hello reload"
     }
 
 }
