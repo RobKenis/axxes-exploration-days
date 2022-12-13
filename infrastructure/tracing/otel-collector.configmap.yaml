@@ -1,4 +1,8 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: tracing
 data:
   otel-collector-config.yaml: |-
     receivers:
@@ -26,6 +30,3 @@ data:
           receivers: [otlp]
           processors: [batch]
           exporters: [jaeger]
-kind: ConfigMap
-metadata:
-  name: otel-collector-config
