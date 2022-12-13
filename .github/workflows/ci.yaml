@@ -14,7 +14,7 @@ jobs:
           distribution: 'adopt'
       - name: Test with Maven
         working-directory: ./atriac-test-results
-        run: mvn clean verify
+        run: mvn clean verify --batch-mode
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
@@ -62,7 +62,7 @@ jobs:
           distribution: 'adopt'
       - name: Test with Maven
         working-directory: ./test-result-visualizer
-        run: mvn clean verify
+        run: mvn clean verify --batch-mode
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
