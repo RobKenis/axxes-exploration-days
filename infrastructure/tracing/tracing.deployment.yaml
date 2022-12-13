@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jaeger-tracing
-  namespace: kube-system
+  namespace: tracing
   labels:
     k8s-app: jaeger-tracing
 spec:
   selector:
     matchLabels:
-      name: jaeger-tracing
+      app.kubernetes.io/name: jaeger-tracing
   template:
     metadata:
       labels:
-        name: jaeger-tracing
+        app.kubernetes.io/name: jaeger-tracing
     spec:
       containers:
         - name: jaeger
