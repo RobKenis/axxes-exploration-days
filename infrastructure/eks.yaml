@@ -1,0 +1,88 @@
+---
+Description: EKS cluster
+Resources:
+  EksClusterRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - eks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSVPCResourceController
+  EksNodeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+                - eks-fargate-pods.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+      Policies:
+        - PolicyName: autoscaling
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "autoscaling:DescribeAutoScalingGroups"
+                  - "autoscaling:DescribeAutoScalingInstances"
+                  - "autoscaling:DescribeLaunchConfigurations"
+                  - "autoscaling:DescribeTags"
+                  - "autoscaling:SetDesiredCapacity"
+                  - "autoscaling:TerminateInstanceInAutoScalingGroup"
+                  - "ec2:DescribeLaunchTemplateVersions"
+                Resource: '*'
+        - PolicyName: external-dns
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "route53:ChangeResourceRecordSets"
+                  - "route53:ListHostedZones"
+                  - "route53:ListResourceRecordSets"
+                Resource: '*'
+  Cluster:
+    Type: 'AWS::EKS::Cluster'
+    Properties:
+      Name: !Ref AWS::StackName
+      Version: '1.23'
+      RoleArn: !GetAtt EksClusterRole.Arn
+      ResourcesVpcConfig:
+        SubnetIds:
+          - subnet-0e3fcb154e8d5671d
+          - subnet-00c2af1b85ddfa83a
+          - subnet-01b9877f57411de7a
+  EksNodegroup:
+    Type: 'AWS::EKS::Nodegroup'
+    Properties:
+      ClusterName: !Ref Cluster
+      NodeRole: !GetAtt EksNodeRole.Arn
+      ScalingConfig:
+        MinSize: 1
+        DesiredSize: 1
+        MaxSize: 20
+      Subnets:
+        - subnet-0e3fcb154e8d5671d
+        - subnet-00c2af1b85ddfa83a
+        - subnet-01b9877f57411de7a
+Outputs:
+  KubeConfigCommand:
+    Description: AWS CLI Command to generate a kubeconfig
+    Value: !Sub 'aws eks update-kubeconfig --name ${AWS::StackName} --region ${AWS::Region}'
